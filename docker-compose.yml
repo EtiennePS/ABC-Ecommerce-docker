@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+    mariadb:
+        image: mariadb
+        restart: always
+        ports:
+            - "37612:3306"
+        networks:
+            - ecb-bdd
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: abc-ecommerce
+            MYSQL_USER: ${API_ABC_ECOMMERCE_BDD_USER}
+            MYSQL_PASSWORD: ${API_ABC_ECOMMERCE_BDD_MDP}
+    ecb:
+        image: tomcat:8.5.72-jdk16-openjdk
+        ports:
+            - "57024:8080"
+        networks:
+            - ecb-bdd
+            - ecommerce
+    ecf:
+        image: nginx:stable-alpine
+        ports:
+            - "19034:80"
+        networks:
+            - ecommerce
+    cob:
+        image: tomcat:8.5.72-jdk16-openjdk
+        ports:
+            - "15013:8080"
+        networks:
+            - cob-bdd
+            - configurator
+    cof:
+        image: nginx:stable-alpine
+        ports:
+            - "32829:80"
+        networks:
+            - configurator
+    maven:
+        image: maven:3.8.3-adoptopenjdk-16
+        networks:
+            - jenkins
+        volumes:
+            - ./ecb:/ecb
+            - ./cob:/cob
+    nodejs:
+        image: node:lts-alpine
+        networks:
+            - jenkins
+        volumes:
+            - ./ecf:/ecf
+            - ./cof:/cof
+    dind:
+        image: docker:dind
+        privileged: true
+        expose:
+            - 12375
+            - 12376
+        volumes:
+            - ./jenkins_data:/var/jenkins_home
+    jenkins:
+        build:
+            dockerfile: Dockerfile-jenkins
+        environment:
+            DOCKER_HOST: tcp://dind:12375
+        ports:
+            - "35122:8080"
+        links:
+            - dind
+        networks:
+            - ecommerce
+            - jenkins
+        volumes:
+            - ./ecb:/ecb
+            - ./ecf:/ecf
+            - ./cob:/cob
+            - ./cof:/cof
+            - ./jenkins_data:/var/jenkins_home
+networks:
+    ecb-bdd:
+    ecommerce:
+    cob-bdd:
+    configurator:
+    jenkins:

@@ -1,0 +1,24 @@
+pipeline {
+    stages {
+        stage('Clear directory') { 
+            steps {
+                sh 'cd /ecb && rm -Rf *' 
+            }
+        },
+        stage('Clone') { 
+            steps {
+                sh 'git clone https://github.com/EtiennePS/ABC-Ecommerce.git && git checkout ecommerce' 
+            }
+        },
+        stage('Build') { 
+            steps {
+                sh 'mvn clean package' 
+            }
+        },
+        stage('Deploy') { 
+            steps {
+                sh 'echo todo' 
+            }
+        }
+    }
+}
