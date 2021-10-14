@@ -8,6 +8,7 @@ services:
             - "37612:3306"
         networks:
             - ecb-bdd
+            - cob-bdd
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: abc-ecommerce
@@ -15,17 +16,28 @@ services:
             MYSQL_PASSWORD: ${API_ABC_ECOMMERCE_BDD_MDP}
     ecb:
         image: tomcat:8.5.72-jdk16-openjdk
+        volumes:
+            - v-ecb:/tomcat
         ports:
             - "57024:8080"
         networks:
             - ecb-bdd
             - ecommerce
+        volumes:
+            - v-ecb:/usr/local/tomcat/webapps
+        environment:
+            - API_ABC_ECOMMERCE_BDD_URL=jdbc:mysql://mariadb:3306/abc-ecommerce
+            - API_ABC_ECOMMERCE_BDD_USER=${API_ABC_ECOMMERCE_BDD_USER}
+            - API_ABC_ECOMMERCE_BDD_MDP=${API_ABC_ECOMMERCE_BDD_MDP}
+            - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
     ecf:
         image: nginx:stable-alpine
         ports:
             - "19034:80"
         networks:
             - ecommerce
+        volumes:
+            - v-ecf:/usr/share/nginx/html
     cob:
         image: tomcat:8.5.72-jdk16-openjdk
         ports:
@@ -33,55 +45,54 @@ services:
         networks:
             - cob-bdd
             - configurator
+        volumes:
+            - v-cob:/usr/local/tomcat/webapps
+        environment:
+            - API_ABC_ECOMMERCE_BDD_URL=jdbc:mysql://mariadb:3306/abc-ecommerce
+            - API_ABC_CONFIGURATOR_BDD_USER=${API_ABC_ECOMMERCE_BDD_USER}
+            - API_ABC_CONFIGURATOR_BDD_MDP=${API_ABC_ECOMMERCE_BDD_MDP}
+            - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
     cof:
         image: nginx:stable-alpine
         ports:
             - "32829:80"
         networks:
             - configurator
-    maven:
-        image: maven:3.8.3-adoptopenjdk-16
-        networks:
-            - jenkins
         volumes:
-            - ./ecb:/ecb
-            - ./cob:/cob
-    nodejs:
-        image: node:lts-alpine
-        networks:
-            - jenkins
-        volumes:
-            - ./ecf:/ecf
-            - ./cof:/cof
-    dind:
-        image: docker:dind
-        privileged: true
-        expose:
-            - 12375
-            - 12376
-        volumes:
-            - ./jenkins_data:/var/jenkins_home
-    jenkins:
-        build:
-            dockerfile: Dockerfile-jenkins
-        environment:
-            DOCKER_HOST: tcp://dind:12375
-        ports:
-            - "35122:8080"
-        links:
-            - dind
+            - v-cof:/usr/share/nginx/html
+    install:
+        build: .
+        depends_on: 
+            - mariadb
+            - ecb
+            - ecf
+            - cob
+            - cof
+        command:
+            - all
         networks:
             - ecommerce
-            - jenkins
+            - configurator
         volumes:
-            - ./ecb:/ecb
-            - ./ecf:/ecf
-            - ./cob:/cob
-            - ./cof:/cof
-            - ./jenkins_data:/var/jenkins_home
+            - v-ecb:/deploy/ecb
+            - v-ecf:/deploy/ecf
+            - v-cob:/deploy/cob
+            - v-cof:/deploy/cof
+        environment:
+            - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
+            - VUE_APP_API_URL=http://localhost:57024/api/v1
+            - VUE_APP_CONF_URL=http://localhost:32829/item
+#            - VUE_APP_API_URL=http://localhost:15013/api/v1
+            - VUE_APP_ECOM_URL=http://localhost:19034
+    
 networks:
     ecb-bdd:
     ecommerce:
     cob-bdd:
     configurator:
-    jenkins:
+
+volumes:
+    v-ecb:
+    v-ecf:
+    v-cob:
+    v-cof:
