@@ -10,10 +10,11 @@ install() {
 	cd $4
 	git checkout $3
 	chmod -R 755 $4
+	rm -rf $5/*
 
 	if [ "$1" = 'mvn' ]; then
 		./mvnw clean package
-		cp ./target/*.war $5/ROOT.war
+		cp ./target/*.war $5
 	elif [ "$1" = 'npm' ]; then
 		npm install
 		npm run build
@@ -24,7 +25,7 @@ install() {
 	fi
 
 	cd $5
-	#rm -Rf $4
+	rm -rf $4
 }
 
 ecb() {
@@ -43,6 +44,7 @@ cob() {
 }
 
 cof() {
+	export VUE_APP_API_URL=$CONF_API_URL
 	GIT_URL=https://github.com/EtiennePS/ABC-Configurator-front.git
 	install npm $GIT_URL master /cof /deploy/cof
 }
@@ -69,8 +71,4 @@ else
 	exit -1
 fi
 
-while true
-do
-    echo "Press [CTRL+C] to stop.."
-    sleep 10
-done
+echo "Installation done"

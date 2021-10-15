@@ -12,62 +12,72 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: abc-ecommerce
-            MYSQL_USER: ${API_ABC_ECOMMERCE_BDD_USER}
-            MYSQL_PASSWORD: ${API_ABC_ECOMMERCE_BDD_MDP}
     ecb:
-        image: tomcat:8.5.72-jdk16-openjdk
-        volumes:
-            - v-ecb:/tomcat
+        build:
+            dockerfile: Dockerfile
+            context: openjdk16
+        depends_on: 
+            - install
+        command:
+            - ecb
         ports:
-            - "57024:8080"
+            - "57024:57024"
         networks:
             - ecb-bdd
             - ecommerce
         volumes:
-            - v-ecb:/usr/local/tomcat/webapps
+            - v-ecb:/appli
         environment:
             - API_ABC_ECOMMERCE_BDD_URL=jdbc:mysql://mariadb:3306/abc-ecommerce
             - API_ABC_ECOMMERCE_BDD_USER=${API_ABC_ECOMMERCE_BDD_USER}
             - API_ABC_ECOMMERCE_BDD_MDP=${API_ABC_ECOMMERCE_BDD_MDP}
             - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
     ecf:
-        image: nginx:stable-alpine
+        build:
+            dockerfile: Dockerfile
+            context: nginx
+        depends_on: 
+            - ecb
         ports:
             - "19034:80"
-        networks:
-            - ecommerce
         volumes:
             - v-ecf:/usr/share/nginx/html
     cob:
-        image: tomcat:8.5.72-jdk16-openjdk
+        build:
+            dockerfile: Dockerfile
+            context: openjdk16
+        depends_on: 
+            - install
+        command:
+            - cob
         ports:
-            - "15013:8080"
+            - "15013:15013"
         networks:
             - cob-bdd
             - configurator
         volumes:
-            - v-cob:/usr/local/tomcat/webapps
+            - v-cob:/appli
         environment:
             - API_ABC_ECOMMERCE_BDD_URL=jdbc:mysql://mariadb:3306/abc-ecommerce
             - API_ABC_CONFIGURATOR_BDD_USER=${API_ABC_ECOMMERCE_BDD_USER}
             - API_ABC_CONFIGURATOR_BDD_MDP=${API_ABC_ECOMMERCE_BDD_MDP}
             - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
     cof:
-        image: nginx:stable-alpine
+        build:
+            dockerfile: Dockerfile
+            context: nginx
+        depends_on: 
+            - cob
         ports:
             - "32829:80"
-        networks:
-            - configurator
         volumes:
             - v-cof:/usr/share/nginx/html
     install:
-        build: .
+        build:
+            dockerfile: Dockerfile
+            context: install
         depends_on: 
             - mariadb
-            - ecb
-            - ecf
-            - cob
-            - cof
         command:
             - all
         networks:
@@ -82,7 +92,7 @@ services:
             - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
             - VUE_APP_API_URL=http://localhost:57024/api/v1
             - VUE_APP_CONF_URL=http://localhost:32829/item
-#            - VUE_APP_API_URL=http://localhost:15013/api/v1
+            - CONF_API_URL=http://localhost:15013/api/v1
             - VUE_APP_ECOM_URL=http://localhost:19034
     
 networks:
