@@ -1,12 +1,6 @@
 TODO
-- forcer la variable d'environnement dans le cof pour l'API avant le build
-- faire persister la bdd en cas de destruction du container grâce à un volume
 - readme
-- variable du entrypoint install
-- fichier curl pour donnée par défaut
-- variable d'environnement
 - faire des vrais users en base
-- revoir le check database
 
 Le projet ABC-Ecommerce est un POC issue du cours d'Architecture Logiciel. Il est constitué d'une partie ecommerce et d'une partie configurateur. Chacune des parties à un back-end Spring Boot et un front-end Vue JS. La partie ecommerce affiche les articles, le panier et les commandes de l'utilisateur tandis que le configurateur est responsable de permettre à l'utilisateur de consulter et choisir les options disponibles sur le produit puis de l'enregistrer dans le panier.
 
@@ -21,3 +15,5 @@ abc-ecommerce-install-1 exited with code 0
 http://localhost:15013/swagger-ui.html
 http://localhost:57024/swagger-ui.html
 http://localhost:19034/
+
+Problème principal : ordre dans lequel se lance les composants (pas possible de lancer le serveur avant récéption des war ni démarrage bdd). Solution boucles dans l'entrypoint des backs.

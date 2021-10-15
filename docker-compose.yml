@@ -9,6 +9,8 @@ services:
         networks:
             - ecb-bdd
             - cob-bdd
+        volumes:
+            - ./bdd:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: abc-ecommerce
@@ -78,8 +80,6 @@ services:
             context: install
         depends_on: 
             - mariadb
-        command:
-            - all
         networks:
             - ecommerce
             - configurator
@@ -94,6 +94,7 @@ services:
             - VUE_APP_CONF_URL=http://localhost:32829/item
             - CONF_API_URL=http://localhost:15013/api/v1
             - VUE_APP_ECOM_URL=http://localhost:19034
+            - INSTALL_TYPE=${INSTALL_TYPE}
     
 networks:
     ecb-bdd:

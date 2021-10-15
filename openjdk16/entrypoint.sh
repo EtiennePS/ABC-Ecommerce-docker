@@ -8,19 +8,33 @@ elif [ "$1" = 'cob' ]; then
     pass="$API_ABC_CONFIGURATOR_BDD_MDP"
 else
 	echo application inconnue $1
-	exit -1
+	exit 30
 fi
 
-while [ ! mysql -u$user -p$pass -h mariadb ]
+DB_NAME=abc-ecommerce
+export RETRIEVED
+
+retrieveDbName() {
+    RETRIEVED=$(mysql -h mariadb -u $1 -p$2 -Bse "SHOW DATABASES;" | grep $3)
+}
+
+retrieveDbName $user $pass $DB_NAME
+
+while [ -z $RETRIEVED ] || [ "$DB_NAME" != "$RETRIEVED" ]
 do 
     echo "Waiting for database..."
     sleep 5
+    retrieveDbName $user $pass $DB_NAME
 done 
+
+echo "Database OK!"
 
 while [ ! -f /appli/*.war ]
 do 
     echo "Waiting for a war file..."
     sleep 5
 done 
+
+echo "War received!"
 
 java -jar /appli/*.war
