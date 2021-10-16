@@ -4,14 +4,16 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>230</x>
-      <y>330</y>
+      <x>260</x>
+      <y>280</y>
       <w>230</w>
       <h>100</h>
     </coordinates>
     <panel_attributes>ecb
 --
-FROM tomcat:8.5.72-jdk16-openjdk
+FROM openjdk:16-jdk-alpine
+RUN apk add mysql-client
+COPY entrypoint.sh /usr/bin/custom-entrypoint
 --
 port hôte : 57024</panel_attributes>
     <additional_attributes/>
@@ -22,14 +24,15 @@ port hôte : 57024</panel_attributes>
       <x>580</x>
       <y>90</y>
       <w>150</w>
-      <h>110</h>
+      <h>120</h>
     </coordinates>
-    <panel_attributes>BDD
+    <panel_attributes>mariadb
 --
 FROM mariadb
+COPY create-user.sql /docker-entrypoint-initdb.d/
+RUN chmod 755 /docker-entrypoint-initdb.d/create-user.sql
 --
-user ecommerce 
-user configurator
+2 users créés
 --
 port hôte : 37612</panel_attributes>
     <additional_attributes/>
@@ -37,26 +40,28 @@ port hôte : 37612</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>370</x>
-      <y>130</y>
-      <w>230</w>
-      <h>220</h>
+      <x>480</x>
+      <y>200</y>
+      <w>120</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-
 *ecb-bdd*</panel_attributes>
-    <additional_attributes>10.0;200.0;210.0;10.0</additional_attributes>
+    <additional_attributes>10.0;80.0;100.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>850</x>
-      <y>330</y>
+      <x>830</x>
+      <y>280</y>
       <w>230</w>
       <h>100</h>
     </coordinates>
     <panel_attributes>cob
 --
-FROM tomcat:8.5.72-jdk16-openjdk
+FROM openjdk:16-jdk-alpine
+RUN apk add mysql-client
+COPY entrypoint.sh /usr/bin/custom-entrypoint
 --
 port hôte : 15013</panel_attributes>
     <additional_attributes/>
@@ -65,26 +70,27 @@ port hôte : 15013</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>720</x>
-      <y>130</y>
-      <w>220</w>
-      <h>220</h>
+      <y>200</y>
+      <w>130</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-
 *cob-bdd*
 </panel_attributes>
-    <additional_attributes>200.0;200.0;10.0;10.0</additional_attributes>
+    <additional_attributes>110.0;80.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>230</x>
-      <y>550</y>
+      <x>260</x>
+      <y>430</y>
       <w>230</w>
       <h>90</h>
     </coordinates>
     <panel_attributes>ecf
 --
 FROM nginx:stable-alpine
+COPY vue-router.conf /etc/nginx/conf.d/default.conf
 --
 port hôte : 19034</panel_attributes>
     <additional_attributes/>
@@ -92,41 +98,18 @@ port hôte : 19034</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>850</x>
-      <y>550</y>
+      <x>830</x>
+      <y>430</y>
       <w>240</w>
       <h>90</h>
     </coordinates>
     <panel_attributes>cof
 --
 FROM nginx:stable-alpine
+COPY vue-router.conf /etc/nginx/conf.d/default.conf
 --
 port hôte : 32829</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>360</x>
-      <y>420</y>
-      <w>110</w>
-      <h>150</h>
-    </coordinates>
-    <panel_attributes>lt=-
-*ecommerce*</panel_attributes>
-    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>920</x>
-      <y>420</y>
-      <w>110</w>
-      <h>150</h>
-    </coordinates>
-    <panel_attributes>lt=-
-*configurator*</panel_attributes>
-    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -147,49 +130,52 @@ port hôte : 35122</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>450</x>
-      <y>410</y>
-      <w>120</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>lt=-
-*ecommerce*</panel_attributes>
-    <additional_attributes>10.0;10.0;100.0;60.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>450</x>
-      <y>510</y>
-      <w>120</w>
+      <x>480</x>
+      <y>370</y>
+      <w>140</w>
       <h>90</h>
     </coordinates>
     <panel_attributes>lt=-
 *ecommerce*</panel_attributes>
-    <additional_attributes>10.0;70.0;100.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;70.0;70.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>740</x>
-      <y>410</y>
-      <w>130</w>
-      <h>80</h>
+      <y>370</y>
+      <w>110</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=-
 *configurator*</panel_attributes>
-    <additional_attributes>10.0;60.0;110.0;10.0</additional_attributes>
+    <additional_attributes>10.0;70.0;90.0;10.0</additional_attributes>
   </element>
   <element>
-    <id>Relation</id>
+    <id>UMLNote</id>
     <coordinates>
-      <x>740</x>
-      <y>490</y>
-      <w>130</w>
-      <h>110</h>
+      <x>270</x>
+      <y>110</y>
+      <w>140</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=-
-*configurator*</panel_attributes>
-    <additional_attributes>10.0;10.0;110.0;90.0</additional_attributes>
+    <panel_attributes>Build et lancement
+via install.sh
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>260</x>
+      <y>530</y>
+      <w>810</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Les fronts s'exécutent sur les navigateur des utilisateurs. Ils n'ont donc pas besoin de réseaux.
+Les installations se font via un volume partagé.
+Les réseaux ecommerce et configurator servent uniquement à l'insertion de jeux de données lors de l'installation.
+bg=yellow</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>

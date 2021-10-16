@@ -2,15 +2,17 @@ version: "3.8"
 
 services:
     mariadb:
-        image: mariadb
+        build:
+            dockerfile: Dockerfile
+            context: mariadb
         restart: always
         ports:
-            - "37612:3306"
+            - "37612:3306" #Can be removed but a direct access can be usefull
         networks:
             - ecb-bdd
             - cob-bdd
         volumes:
-            - ./bdd:/var/lib/mysql
+            - ./database-volume:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: abc-ecommerce
