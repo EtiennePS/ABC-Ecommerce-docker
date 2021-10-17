@@ -22,19 +22,19 @@ retrieveDbName $user $pass $DB_NAME
 
 while [ -z $RETRIEVED ] || [ "$DB_NAME" != "$RETRIEVED" ]
 do 
-    echo "Waiting for database..."
+    echo "$1 is waiting for database..."
     sleep 5
     retrieveDbName $user $pass $DB_NAME
 done 
 
-echo "Database OK!"
+echo "$1 : Database OK!"
 
 while [ ! -f /appli/*.war ]
 do 
-    echo "Waiting for a war file..."
+    echo "$1 is waiting for a war file..."
     sleep 5
 done 
 
-echo "War received!"
+echo "$1 : War received!"
 
 java -jar /appli/*.war

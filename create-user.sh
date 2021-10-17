@@ -1,6 +1,6 @@
 #bin/sh
 
-. .env.prod
+. ./.env.prod
 
 SQLFILE_PATH=mariadb/create-user.sql
 

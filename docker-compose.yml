@@ -14,7 +14,7 @@ services:
         volumes:
             - ./database-volume:/var/lib/mysql
         environment:
-            MYSQL_ROOT_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: ${ABC_ECOMMERCE_BDD_ROOT_MDP}
             MYSQL_DATABASE: abc-ecommerce
     ecb:
         build:
@@ -91,7 +91,7 @@ services:
             - v-cob:/deploy/cob
             - v-cof:/deploy/cof
         environment:
-            - API_ABC_ECOMMERCE_JWT_SECRET=${API_ABC_ECOMMERCE_JWT_SECRET}
+            - API_ABC_ECOMMERCE_JWT_SECRET=secretForJunitTests
             - VUE_APP_API_URL=http://localhost:57024/api/v1
             - VUE_APP_CONF_URL=http://localhost:32829/item
             - CONF_API_URL=http://localhost:15013/api/v1

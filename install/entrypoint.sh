@@ -13,6 +13,8 @@ install() {
 	chmod -R 755 $BUILD_PATH
 	rm -rf $DEPLOY_PATH/*
 
+	echo "Compilation dans $BUILD_PATH ..."
+
 	if [ "$PROJECT_TYPE" = 'mvn' ]; then
 		./mvnw clean package
 		cp ./target/*.war $DEPLOY_PATH
@@ -21,12 +23,14 @@ install() {
 		npm run build
 		cp -r ./dist/* $DEPLOY_PATH
 	else
-		echo type de projet inconnue $PROJECT_TYPE
+		echo "type de projet inconnue $PROJECT_TYPE"
 		exit 10
 	fi
 
 	cd $DEPLOY_PATH
 	rm -rf $BUILD_PATH
+	echo "Contenu déployé dans $DEPLOY_PATH : "
+	ls -lart
 }
 
 ecb() {
