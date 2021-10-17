@@ -106,9 +106,9 @@ Le container a 6 variables d'environnements. L'une d'entre elle est INSTALL_TYPE
 
 Ce containe s'arrête une fois les déploiements terminés en affichant ceci :
 
-`abc-ecommerce-install-1  | Installation done
+`abc-ecommerce-install-1  | Installation done`
 
-abc-ecommerce-install-1 exited with code 0`
+`abc-ecommerce-install-1 exited with code 0`
 
 ## Problèmes rencontrés
 
@@ -154,16 +154,16 @@ Ma seule hypothèse est qu'une version instable du package npm a été temporair
 
 J'ai tenté d'exécuter le projet sur l'ordinateur d'une autre personne pour m'assurer qu'il fonctionne, mais j'ai obtenu l'erreur suivante :
 
-`abc-ecommerce-docker-install-1  | standard_init_linux.go:228: exec user process caused: no such file or directory
+`abc-ecommerce-docker-install-1  | standard_init_linux.go:228: exec user process caused: no such file or directory`
 
-abc-ecommerce-docker-install-1 exited with code 1
+`abc-ecommerce-docker-install-1 exited with code 1`
 
-abc-ecommerce-docker-ecb-1      | standard_init_linux.go:228: exec user process caused: no such file or directory
+`abc-ecommerce-docker-ecb-1      | standard_init_linux.go:228: exec user process caused: no such file or directory`
 
-abc-ecommerce-docker-cob-1      | standard_init_linux.go:228: exec user process caused: no such file or directory
+`abc-ecommerce-docker-cob-1      | standard_init_linux.go:228: exec user process caused: no such file or directory`
 
-abc-ecommerce-docker-ecb-1 exited with code 1
+`abc-ecommerce-docker-ecb-1 exited with code 1`
 
-abc-ecommerce-docker-cob-1 exited with code 1`
+`abc-ecommerce-docker-cob-1 exited with code 1`
 
 Il est malheureusement trop tard pour que je découvre l'origine de ce problème, qui n'arrive pas sur mon PC. Je soupçonne que cela vienne des entrypoints car seuls les composants qui en ont sont impactés.
